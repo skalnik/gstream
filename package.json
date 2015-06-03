@@ -1,0 +1,17 @@
+{
+  "name": "gcode-streamer",
+  "version": "0.0.2",
+  "description": "Stream GCode to your serial port!",
+  "author": {
+    "name": "Mike Skalnik"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/skalnik/gcode-streamer"
+  },
+  "dependencies": {
+  },
+  "engines": {
+    "node": ">= 0.12.0"
+  }
+}
