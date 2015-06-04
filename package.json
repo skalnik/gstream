@@ -1,13 +1,13 @@
 {
-  "name": "gcode-streamer",
-  "version": "0.0.2",
-  "description": "Stream GCode to your serial port!",
+  "name": "gstream",
+  "version": "0.0.1",
+  "description": "Easily stream G-code to your 3D printer",
   "author": {
     "name": "Mike Skalnik"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/skalnik/gcode-streamer"
+    "url": "git://github.com/skalnik/gstream"
   },
   "dependencies": {
     "serialport": "~1.7.4",

@@ -1,12 +1,8 @@
-# Node GCode Streamer
+# Node G-Code Streamer
 
-Easily stream GCode to your 3d printer!
-
-:warning: This is still a work in progress :warning:
-
-Ideally, it should be as easy as:
+Easily stream G-code to your 3D printer!
 
 ```
-$ npm install -g gcode-streamer
-$ gcode-streamer file.gcode
+$ npm install -g gstream
+$ gtream file.gcode
 ```
