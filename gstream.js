@@ -22,18 +22,10 @@ var file = argv._[0]
 var gcodeStreamer
 
 if (file) {
-  fs.open(file, function (err, data) {
-    if (err) {
-      console.log(err)
-      process.exit(1)
-    }
-
-    gcodeStreamer = readline.createInterface({
-      input: data,
-      output: process.stdout
-    })
+  gcodeStreamer = readline.createInterface({
+    input: fs.createReadStream(file),
+    output: process.stdout
   })
-  printer.drain()
 } else {
   gcodeStreamer = readline.createInterface({
     input: process.stdin,
