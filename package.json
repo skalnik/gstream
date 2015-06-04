@@ -1,6 +1,6 @@
 {
   "name": "gstream",
-  "version": "0.0.3",
+  "version": "0.0.0",
   "description": "Easily stream G-code to your 3D printer",
   "license": "MIT",
   "author": {
