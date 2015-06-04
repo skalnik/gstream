@@ -45,12 +45,6 @@ if (file) {
       input: data,
       output: process.stdout
     })
-
-    var gcode = data.toString().split('\n')
-    gcode.forEach(function (line) {
-      console.log('> ', line)
-      printer.write(line)
-    })
   })
   printer.drain()
 } else {
@@ -64,7 +58,7 @@ gcodeStreamer.setPrompt('> ')
 gcodeStreamer.prompt()
 
 gcodeStreamer.on('line', function (line) {
-  // printer.write(line)
+  printer.write(line)
   gcodeStreamer.prompt()
 }).on('close', function () {
   printer.drain()
