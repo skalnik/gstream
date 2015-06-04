@@ -10,6 +10,8 @@
     "url": "git://github.com/skalnik/gcode-streamer"
   },
   "dependencies": {
+    "serialport": "~1.7.4",
+    "yargs": "~3.10.0"
   },
   "engines": {
     "node": ">= 0.12.0"

@@ -1,19 +1,72 @@
+var fs = require('fs')
+var readline = require('readline')
 var SerialPort = require('serialport').SerialPort
 
-var printerPort = new SerialPort('/dev/tty.usbmodem1411', {
-  baudrate: 57600
+var argv = require('yargs')
+  .usage('Usage: $0 [options] [filename]')
+  .alias('p', 'port')
+  .nargs('p', 1)
+  .default('p', '/dev/tty.usbmodem1411')
+  .describe('p', 'Serial port path')
+  .alias('b', 'baudrate')
+  .nargs('b', 1)
+  .default('b', 57600)
+  .describe('b', 'Serial port baudrate')
+  .help('h')
+  .alias('h', 'help')
+  .argv
+
+var file = argv._[0]
+
+var printer = new SerialPort(argv.port, { baudrate: argv.baudrate }, false)
+
+printer.on('open', function () {
+  console.log('Connected to printer!')
 })
 
-printerPort.on('open', function () {
-  console.log('Connected!')
-  printerPort.on('data', function (data) {
-    console.log('Printer: ' + data)
-    printerPort.close()
-  })
+printer.on('data', function (data) {
+  console.log('< ', data)
+})
 
-  console.log('Sending: M501')
-  printerPort.write('M501\n', function (err, results) {
-    console.log('err ' + err)
-    console.log('results ' + results)
+printer.open(function (err) {
+  console.log('Could not connect!', err)
+  process.exit(1)
+})
+
+var gcodeStreamer
+if (file) {
+  fs.open(file, function (err, data) {
+    if (err) {
+      console.log(err)
+      process.exit(1)
+    }
+
+    gcodeStreamer = readline.createInterface({
+      input: data,
+      output: process.stdout
+    })
+
+    var gcode = data.toString().split('\n')
+    gcode.forEach(function (line) {
+      console.log('> ', line)
+      printer.write(line)
+    })
   })
+  printer.drain()
+} else {
+  gcodeStreamer = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  })
+}
+
+gcodeStreamer.setPrompt('> ')
+gcodeStreamer.prompt()
+
+gcodeStreamer.on('line', function (line) {
+  // printer.write(line)
+  gcodeStreamer.prompt()
+}).on('close', function () {
+  printer.drain()
+  printer.close()
 })
