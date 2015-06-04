@@ -19,23 +19,8 @@ var argv = require('yargs')
   .argv
 
 var file = argv._[0]
-
-var printer = new SerialPort(argv.port, { baudrate: argv.baudrate }, false)
-
-printer.on('open', function () {
-  console.log('Connected to printer!')
-})
-
-printer.on('data', function (data) {
-  console.log('< ', data)
-})
-
-printer.open(function (err) {
-  console.log('Could not connect!', err)
-  process.exit(1)
-})
-
 var gcodeStreamer
+
 if (file) {
   fs.open(file, function (err, data) {
     if (err) {
@@ -56,13 +41,32 @@ if (file) {
   })
 }
 
-gcodeStreamer.setPrompt('> ')
-gcodeStreamer.prompt()
+var printer = new SerialPort(argv.port, { baudrate: argv.baudrate }, false)
 
-gcodeStreamer.on('line', function (line) {
-  printer.write(line)
+printer.on('open', function () {
+  gcodeStreamer.output.write('Connected to printer!\n')
+  gcodeStreamer.setPrompt('> ')
   gcodeStreamer.prompt()
-}).on('close', function () {
-  printer.drain()
-  printer.close()
+
+  gcodeStreamer.on('line', function (line) {
+    printer.write(line + '\n')
+    gcodeStreamer.prompt()
+  }).on('close', function () {
+    printer.drain()
+    printer.close()
+  })
+})
+
+printer.on('data', function (data) {
+  gcodeStreamer.output.clearLine()
+  gcodeStreamer.output.cursorTo(0)
+  gcodeStreamer.output.write('< ' + data.toString().replace(/echo:/g, ''))
+  gcodeStreamer.prompt()
+})
+
+printer.open(function (err) {
+  if (err) {
+    console.log('Could not connect!', err)
+    process.exit(1)
+  }
 })
